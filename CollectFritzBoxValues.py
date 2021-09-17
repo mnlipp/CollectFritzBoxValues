@@ -16,7 +16,6 @@ from json.decoder import JSONDecodeError
 import yaml
 import collections.abc
     
-# See also https://github.com/shred/fritzswitch/blob/master/fritzswitch.py
 class Collector(object):
 
     def __init__(self, config):
@@ -30,6 +29,7 @@ class Collector(object):
         self.sid = self.get_sid(self.config["fritzbox"]["user"],
                                 self.config["fritzbox"]["password"])
 
+    # See also https://github.com/shred/fritzswitch/blob/master/fritzswitch.py
     def get_sid(self, user, password):
         """Authenticate and get a Session ID"""
         with closing(urlopen("http://" + self.config["fritzbox"]["ip"] 
