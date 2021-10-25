@@ -33,7 +33,7 @@ class Collector(object):
     def get_sid(self, user, password):
         """Authenticate and get a Session ID"""
         with closing(urlopen("http://" + self.config["fritzbox"]["ip"] 
-                             + '/login_sid.lua')) as f:
+                             + '/login_sid.lua', None, 5)) as f:
             dom = parse(f)
             sid = dom.findtext('./SID')
             challenge = dom.findtext('./Challenge')
@@ -47,7 +47,7 @@ class Collector(object):
             uri = "https://" + self.config["fritzbox"]["ip"] \
                 + '/login_sid.lua?username=' \
                 + user + '&response=' + response
-            with closing(urlopen(uri, context=self.ctx)) as f:
+            with closing(urlopen(uri, None, 5, context=self.ctx)) as f:
                 dom = parse(f)
                 sid = dom.findtext('./SID')
 
@@ -62,7 +62,7 @@ class Collector(object):
             {"xhr" : 1, "sid": self.sid, "lang": "de",
              "page": "docInfo", "xhrId": "all", "no_sidrenew": ""})
         data = data.encode('ascii')
-        with closing(urlopen(uri, data, context=self.ctx)) as f:
+        with closing(urlopen(uri, data, 5, context=self.ctx)) as f:
             if f.status != 200:
                 raise IOError
             try:
