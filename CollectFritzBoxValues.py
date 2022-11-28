@@ -89,13 +89,11 @@ class Collector(object):
             self.write_obj(out, path + "." + str(i), obj[i])
     
     def send_data(self, data):
-        payload = pickle.dumps(data, protocol=2)
-        header = struct.pack("!L", len(payload))
-        message = header + payload
         with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as upconn:
             upconn.connect((self.config["graphite"]["server"], 
                             self.config["graphite"]["port"]))
-            upconn.send(message)
+            for metric in data:
+                upconn.send((metric[0] + " " + metric[1][1] + " " + metric[1][0] + "\n").encode())
 
 def update(d, u):
     for k, v in u.items():
@@ -113,7 +111,7 @@ if __name__ == '__main__':
                       "password": "none" },
 
         "graphite": { "server": "localhost",
-                      "port": 2004 },
+                      "port": 2003 },
         "interval": 5
         }
     
