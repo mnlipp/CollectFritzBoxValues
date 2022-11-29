@@ -14,6 +14,7 @@ import sys
 import socket
 from json.decoder import JSONDecodeError
 import yaml
+import re
 import collections.abc
     
 class Collector(object):
@@ -82,6 +83,14 @@ class Collector(object):
     
     def write_dict(self, out, path, obj):
         for key, value in obj.items():
+            if key == "multiplex" or key == "type":
+                continue
+            if isinstance(value, str):
+                m = re.search("([0-9]+) - ([0-9]+)", value)
+                if m != None:
+                    self.write_obj(out, path + "." + key + "range.min", m.group(1))
+                    self.write_obj(out, path + "." + key + "range.max", m.group(2))
+                    continue
             self.write_obj(out, path + "." + key, value)
     
     def write_list(self, out, path, obj):
